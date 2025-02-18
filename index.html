@@ -48,6 +48,7 @@
 
     <script>
         let captchaText = "";
+        let generatedPdfUrl = "";
 
         // 生成验证码
         function generateCaptcha() {
@@ -122,10 +123,12 @@
                 const pdfBytes = await pdfDoc.save();
                 const blob = new Blob([pdfBytes], { type: 'application/pdf' });
 
+                // 生成 URL 供预览
+                generatedPdfUrl = URL.createObjectURL(blob);
+
                 // 预览PDF
-                const url = URL.createObjectURL(blob);
-                document.getElementById("pdf-viewer").src = url;
-                document.getElementById("download-link").href = url;
+                document.getElementById("pdf-viewer").src = generatedPdfUrl;
+                document.getElementById("download-link").href = generatedPdfUrl;
 
                 // 显示PDF区域
                 document.getElementById("pdf-container").style.display = "block";
@@ -135,17 +138,19 @@
             }
         }
 
-        // 点击下载时触发下载并打开浏览器
+        // 点击下载时触发下载并跳转到浏览器
         function triggerDownload() {
-            const pdfUrl = document.getElementById("pdf-viewer").src;
-
-            // 使用 window.open 来在默认浏览器中打开文件
-            const newWindow = window.open(pdfUrl, '_blank');
-
-            if (newWindow) {
-                newWindow.focus();
+            // 判断用户设备类型并跳转
+            var userAgent = navigator.userAgent.toLowerCase();
+            if (/iphone|ipod|ipad/.test(userAgent)) {
+                // iOS设备，跳转到浏览器
+                window.location.href = generatedPdfUrl;
+            } else if (/android/.test(userAgent)) {
+                // Android设备，跳转到浏览器
+                window.location.href = generatedPdfUrl;
             } else {
-                alert("请允许弹出窗口以进行下载");
+                // 其他设备，跳转到浏览器
+                window.location.href = generatedPdfUrl;
             }
         }
 
