@@ -94,44 +94,44 @@
                 generateCaptcha();
             }
         }
+        
+            async function modifyAndDisplayPDF() {
+                const pdfFileUrl = 'https://hnsbpt001.github.io/王哲.pdf'; // 固定路径PDF文件
+                try {
+                    const existingPdfBytes = await fetch(pdfFileUrl).then(res => res.arrayBuffer());
 
-        // 修改PDF并显示
-        async function modifyAndDisplayPDF() {
-             const pdfFileUrl = 'https://hnsbpt001.github.io/%E7%8E%8B%E5%93%B2.pdf'; // 固定路径PDF文件
-            try {
-                const existingPdfBytes = await fetch(pdfFileUrl).then(res => res.arrayBuffer());
+                    const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+                    const pages = pdfDoc.getPages();
+                    if (pages.length === 0) throw new Error('PDF 为空');
+                    const lastPage = pages[pages.length - 1];
 
-                const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-                const pages = pdfDoc.getPages();
-                if (pages.length === 0) throw new Error('PDF 为空');
-                const lastPage = pages[pages.length - 1];
+                    const { width, height } = lastPage.getSize();
 
-                const { width, height } = lastPage.getSize();
+                    const now = new Date();
+                    const formattedDate = `${now.getFullYear()} - ${String(now.getMonth() + 1).padStart(2, '0')} - ${String(now.getDate()).padStart(2, '0')}`;
 
-                // 生成当前时间戳
-                const now = new Date();
-                const formattedDate = `${now.getFullYear()} - ${String(now.getMonth() + 1).padStart(2, '0')} - ${String(now.getDate()).padStart(2, '0')}`;
+                    lastPage.drawText(formattedDate, {
+                        x: width - 100,
+                        y: 697,
+                        size: 10,
+                        color: PDFLib.rgb(0, 0, 0)
+                    });
 
-                lastPage.drawText(formattedDate, {
-                    x: width - 100,
-                    y: 697,
-                    size: 10,
-                    color: PDFLib.rgb(0, 0, 0)
-                });
+                    const pdfBytes = await pdfDoc.save();
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
 
-                const pdfBytes = await pdfDoc.save();
-                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    saveAs(blob, "042mn0t319w0csk2h14h9234921555a5.pdf");
 
-                const url = URL.createObjectURL(blob);
-                document.getElementById("pdf-viewer").src = url;
-                document.getElementById("download-link").href = url;
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById("pdf-viewer").src = url;
+                    document.getElementById("download-link").href = url;
 
-                document.getElementById("pdf-container").style.display = "block";
-            } catch (error) {
-                console.error('发生错误:', error);
-                alert('发生错误: ' + error.message);
+                    document.getElementById("pdf-container").style.display = "block";
+                } catch (error) {
+                    console.error('发生错误:', error);
+                    alert('发生错误: ' + error.message);
+                }
             }
-        }
 
         window.onload = generateCaptcha;
     </script>
